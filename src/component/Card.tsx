@@ -1,16 +1,32 @@
-const decodeHtmlEntities = (html) => {
+const decodeHtmlEntities = (html: string): string => {
   const doc = new DOMParser().parseFromString(html, "text/html");
-  return doc.body.textContent;
+  return doc.body.textContent || "";
 };
 
-const Card = ({ data }) => {
+type RedditData = {
+  title: string;
+  selftext_html: string;
+  url: string;
+  score?: number;
+};
+
+type RedditPost = {
+  data: RedditData;
+};
+
+type CardProps = {
+  data: RedditPost[];
+};
+
+const Card: React.FC<CardProps> = ({ data }) => {
   return (
     <div className="flex flex-col gap-3">
       {data.length > 0 &&
         data.map((d, i) => (
           <div className="p-4 border border-black rounded-md min-w-fit" key={i}>
-            <h3 className=" font-medium text-xl mb-4">{d.data.title}</h3>
-            <div className="text-wrap"
+            <h3 className="font-medium text-xl mb-4">{d.data.title}</h3>
+            <div
+              className="text-wrap"
               dangerouslySetInnerHTML={{
                 __html: decodeHtmlEntities(d.data.selftext_html),
               }}
